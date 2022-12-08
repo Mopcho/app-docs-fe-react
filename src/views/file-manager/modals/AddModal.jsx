@@ -54,7 +54,7 @@ export default function show({ show, onClose }) {
           "fileName": fileName
         });
 
-        const awsResponse = await service.uploadFileToS3(files[0], dataResponse.preSignedUrl,mimeType);
+        const awsResponse = await service.uploadFileToS3(files[0],dataResponse.preSignedUrl, mimeType.type);
 
         return dataResponse;
       },
@@ -64,7 +64,7 @@ export default function show({ show, onClose }) {
           onClose();
         },
         onError: (err) => {
-          console.log("Failed To Upload", err)
+          console.log("Failed To Upload", err);
         },
       }
     );

@@ -33,37 +33,7 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
             })
     );
 
-    const downloadFile = async ({key, contentType}) => {
-        const result = await service.get(contentType === 'video' ? 'media' : 'documents',key);
-        fetch(result.presignedUrl, {
-            method: 'GET',
-            })
-            .then((response) => response.blob())
-            .then((blob) => {
-              // Create blob link to download
-              const url = window.URL.createObjectURL(
-                new Blob([blob]),
-              );
-              const link = document.createElement('a');
-              link.href = url;
-
-              const extension = checkExtension(contentType);
-
-              link.setAttribute(
-                'download',
-                `FileName.${extension.extName}`,
-              );
-
-              // Append to html link element page
-              document.body.appendChild(link);
-
-              // Start download
-              link.click();
-
-              // Clean up and remove the link
-              link.parentNode.removeChild(link);
-            });
-    }
+    
 
     // helpers
     const items = (documents && documents.data) ? documents.data : [];
@@ -74,9 +44,6 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
             <div className="intro-y grid grid-cols-12 gap-3 sm:gap-6 mt-5">
                 {items.map((item, i) => (
                     <SingleFile
-                        onClick={() => {
-                            downloadFile({key: item.key, contentType: item.contentType})
-                        }}
                         file={item}
                         checked={false}
                         onChange={() => { }}

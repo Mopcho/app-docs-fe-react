@@ -17,7 +17,8 @@ export default function DeleteModal({ fileToDelete, setFileToDelete, del }) {
         setFileToDelete(null);
       },
       onError: (err) => {
-        console.log(err)
+        console.log(err);
+        queryClient.invalidateQueries(["documents"]);
         // toastError("Could not delete");
       },
     }

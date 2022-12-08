@@ -8,8 +8,52 @@ import {
     DropdownContent,
     DropdownItem,
 } from "@/base-components";
+import useService from "../../service";
+import { checkExtension } from "../../utils/mimeTypes";
+
 
 export default function Main({ file, checked, onChange, edit, del, ...rest }) {
+    let { service } = useService();
+
+    const downloadFile = async ({key, contentType}) => {
+        service.get(contentType.includes('video') ? 'media' : 'documents',key)
+        .then((res) => {
+            console.log(res);
+            fetch(res.presignedUrl, {
+                method: 'GET',
+            })
+            .then((response) => response.blob())
+            .then((blob) => {
+                    console.log('asdasd');
+                  // Create blob link to download
+                  const url = window.URL.createObjectURL(
+                    new Blob([blob]),
+                  );
+                  const link = document.createElement('a');
+                  link.href = url;
+    
+                  const extension = checkExtension(contentType);
+    
+                  link.setAttribute(
+                    'download',
+                    `FileName.${extension.extName}`,
+                  );
+    
+                  console.log(`FileName.${extension.extName}`);
+    
+                  // Append to html link element page
+                  document.body.appendChild(link);
+    
+                  // Start download
+                  link.click();
+    
+                  // Clean up and remove the link
+                  link.parentNode.removeChild(link);
+                });
+        })
+        
+    }
+
     return (
         <div {...rest}
             className="intro-y col-span-6 sm:col-span-4 md:col-span-3 2xl:col-span-2"
@@ -26,22 +70,28 @@ export default function Main({ file, checked, onChange, edit, del, ...rest }) {
                 {(() => {
                     if (file.contentType == "Empty Folder")
                         return (
-                            <Link
-                                to="#"
+                            <button
+                            onClick={() => {
+                                downloadFile({key: file.key, contentType: file.contentType})
+                            }}
                                 className="w-3/5 file__icon file__icon--empty-directory mx-auto"
-                            ></Link>
+                            ></button>
                         );
                     else if (file.contentType == "Folder")
                         return (
-                            <Link
-                                to="#"
+                            <button
+                            onClick={() => {
+                                downloadFile({key: file.key, contentType: file.contentType})
+                            }}
                                 className="w-3/5 file__icon file__icon--directory mx-auto"
-                            ></Link>
+                            ></button>
                         );
                     else if (file.contentType.split('/')[0] === "image")
                         return (
-                            <Link
-                                to="#"
+                            <button
+                            onClick={() => {
+                                downloadFile({key: file.key, contentType: file.contentType})
+                            }}
                                 className="w-3/5 file__icon file__icon--image mx-auto"
                             >
                                 <div className="file__icon--image__preview image-fit">
@@ -50,28 +100,50 @@ export default function Main({ file, checked, onChange, edit, del, ...rest }) {
                                         src={file.preSignedUrl}
                                     />
                                 </div>
-                            </Link>
+                            </button>
                         );
                         else if (file.contentType.split('/')[0] === "text")
                         return (
-                            <iframe src={file.preSignedUrl} className="w-full h-4/5"></iframe>
+                            // <iframe src={file.preSignedUrl} className="w-full h-4/5"></iframe>
                             // <TextFile file={file} maxLength={70}/> 
+                            <button
+                            onClick={() => {
+                                downloadFile({key: file.key, contentType: file.contentType})
+                            }}
+                            className="w-3/5 file__icon file__icon--file mx-auto"
+                        >
+                            <div className="file__icon__file-name">
+                                {file.contentType}
+                            </div>
+                        </button>
                         );
                         else if(file.contentType.split('/')[0] === "video") {
                             return (
-                                <iframe src={file.url} className="w-full h-4/5"></iframe>
-                            )
-                        }
-                    else
-                        return (
-                            <Link
-                                to="#"
+                                // <iframe src={file.url} className="w-full h-4/5"></iframe>
+                                <button
+                                onClick={() => {
+                                    downloadFile({key: file.key, contentType: file.contentType})
+                                }}
                                 className="w-3/5 file__icon file__icon--file mx-auto"
                             >
                                 <div className="file__icon__file-name">
                                     {file.contentType}
                                 </div>
-                            </Link>
+                            </button>
+                            )
+                        }
+                    else
+                        return (
+                            <button
+                            onClick={() => {
+                                downloadFile({key: file.key, contentType: file.contentType})
+                            }}
+                                className="w-3/5 file__icon file__icon--file mx-auto"
+                            >
+                                <div className="file__icon__file-name">
+                                    {file.contentType}
+                                </div>
+                            </button>
                         );
                 })()}
                 <Link
