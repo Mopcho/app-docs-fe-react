@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom';
-import * as $_ from "lodash";
 import {
     Lucide,
     Dropdown,
@@ -9,9 +8,6 @@ import {
     DropdownContent,
     DropdownItem,
 } from "@/base-components";
-import useService from '../../service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { TextFile } from './TextFile';
 
 export default function Main({ file, checked, onChange, edit, del, ...rest }) {
     return (

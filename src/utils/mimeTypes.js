@@ -24,6 +24,24 @@ export const checkMimeType = (filePath, db = mimeDatabase) => {
 	}
 };
 
+export const checkExtension = (contentType, db = mimeDatabase) => {
+	let foundElement;
+	db.forEach((element) => {
+		if (element.type === contentType) {
+			foundElement = element;
+		}
+	});
+
+	if (!foundElement) {
+		return {
+			extName: extension,
+			type: 'unknown/unknown',
+		};
+	} else {
+		return foundElement;
+	}
+};
+
 const mimeDatabase = [
 	{
 		extName: 'txt',

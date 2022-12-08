@@ -3,6 +3,22 @@ import axios from 'axios';
 import { uploadToS3 } from './s3';
 
 const service = (_token) => ({
+	get(resource, id) {
+		// BRACKETS ERROR
+		const url = `${host}/${resource}/${id}`;
+		return fetch(url, {
+			method: 'GET',
+			headers: new Headers({
+				'content-type': 'application/json',
+				Authorization: `Bearer ${_token}`,
+			})
+		}).then((res) => {
+				if (res.status > 299) {
+					throw new Error(res.status);
+				}
+				return res.json();
+			});
+	},
 	find(resource, filters = {}) {
 		let length = Object.keys(filters).length;
 
@@ -17,7 +33,6 @@ const service = (_token) => ({
 			}
 		});
 		let url = `${host}/${resource}${queryString}`;
-		console.log(url);
 		return fetch(url, {
 			method: 'GET',
 			headers: new Headers({

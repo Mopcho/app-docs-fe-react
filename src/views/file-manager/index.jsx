@@ -1,7 +1,5 @@
 // hooks
 import { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
 
 // modals
 import AddModal from "./modals/AddModal";
@@ -12,23 +10,11 @@ import AddLabelModal from "./modals/AddLabelModal";
 // page components
 import FileManagerMenu from "./FileManagerMenu"
 import FileManagerFilter from "./FileManagerFilter";
-import FilesList, { Pagination } from "./FilesList"
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import FilesList from "./FilesList"
 import { useParams } from "react-router-dom";
 
 
 export default function FileManagerPage() {
-  // authentication/redirection
-  // NOTE : Commented this because /service is already handling user login
-  // const { isAuthenticated, isLoading: isLoadingToken, loginWithRedirect } = useAuth0();
-
-  // useEffect(() => {
-  //   if (!isAuthenticated && !isLoadingToken) {
-  //     loginWithRedirect();
-  //   }
-  // }, [isAuthenticated, isLoadingToken])
-  //---------------------------
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState("")
   const onSearchChange = (e) => {
     setSearch(e.target.value)
@@ -37,7 +23,6 @@ export default function FileManagerPage() {
   // modal states
   const [addModal, setAddModal] = useState(null);
   const [addLabelModal, setAddLabelModal] = useState(null);
-  const [editModal, setEditModal] = useState(null);
   const [fileToDelete, setFileToDelete] = useState(null);
   const [fileToEdit, setFileToEdit] = useState(null);
   //-------------
