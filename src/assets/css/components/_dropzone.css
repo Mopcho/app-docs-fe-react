@@ -1,0 +1,15 @@
+.dropzone {
+    @apply border-0 dark:bg-darkmode-600 min-h-0 p-0;
+}
+
+.dropzone .dz-message {
+    @apply m-0;
+}
+
+.dropzone.dz-started .dz-message {
+    @apply block
+}
+
+.dropzone .dz-preview .dz-progress {
+    @apply hidden 
+}
