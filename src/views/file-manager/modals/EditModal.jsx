@@ -4,18 +4,18 @@ import { Modal } from "../../../base-components/modal";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useService from "../../../service";
 
-export default function EditModal({ file, onClose }) {
+export default function EditModal({ file, onClose , contentType}) {
   // edit documents
   const queryClient = useQueryClient();
   const {service} = useService();
   const { mutate: updateDocument, isLoading: isLoadingUpdateDocument } =
   useMutation(
       async ([id, data]) => {
-        await service.update("documents", id, data);
+        await service.update('all', id, data);
       },
       {
         onSuccess: async (data) => {
-          await queryClient.invalidateQueries(["documents"]);
+          await queryClient.invalidateQueries();
           onClose();
           // toastSuccess("Updated");
         },

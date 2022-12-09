@@ -44,6 +44,7 @@ export default function FileManagerPage() {
           file={fileToEdit}
           addModal={false}
           onClose={() => setFileToEdit(null)}
+          contentType={contentType}
         />
         <DeleteModal fileToDelete={fileToDelete} setFileToDelete={setFileToDelete} del={() => { }} />
         {/* End of modals */}
