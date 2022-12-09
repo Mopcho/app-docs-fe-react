@@ -56,7 +56,7 @@ export default function FileManagerPage() {
           <FileManagerMenu setAddLabelModal={setAddLabelModal}/>
         </div>
         <div className="col-span-12 lg:col-span-9 2xl:col-span-10">
-          <FileManagerFilter onSearchChange={onSearchChange} search={search} setAddModal={setAddModal} />
+          <FileManagerFilter onSearchChange={onSearchChange} search={search} setAddModal={setAddModal}/>
           <FilesList search={search} setFileToDelete={setFileToDelete} setFileToEdit={setFileToEdit} contentType={contentType} status={status}/>
         </div>
       </div>

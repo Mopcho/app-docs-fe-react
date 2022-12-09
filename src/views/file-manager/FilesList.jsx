@@ -23,7 +23,8 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
             limit: itemsPerPage,
             offset: currentPage + itemsPerPage,
             contentType,
-            status
+            status,
+            search
         }],
         () => {
             return service.find(contentType === 'all' ? 'all' : contentType.includes('video') ? 'media' : 'documents', {
