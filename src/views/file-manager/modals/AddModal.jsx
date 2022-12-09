@@ -58,7 +58,8 @@ export default function show({ show, onClose }) {
 
   const onSuccessFn = async() => {
     onClose();
-    return await queryClient.invalidateQueries(['documents']);
+    await queryClient.invalidateQueries(['documents']);
+    await queryClient.invalidateQueries(['media']);
   }
 
   const onErrorFn = (err) => {

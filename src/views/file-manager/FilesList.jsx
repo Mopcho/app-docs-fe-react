@@ -44,6 +44,7 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
                 {items.map((item, i) => (
                     <SingleFile
                         file={item}
+                        status={status}
                         checked={false}
                         onChange={() => { }}
                         edit={() => {

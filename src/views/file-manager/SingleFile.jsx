@@ -10,10 +10,12 @@ import {
 } from "@/base-components";
 import useService from "../../service";
 import { checkExtension } from "../../utils/mimeTypes";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 
-export default function Main({ file, checked, onChange, edit, del, ...rest }) {
+export default function Main({ file, checked, onChange, edit, del, status, ...rest }) {
     let { service } = useService();
+    const queryClient = useQueryClient();
 
     const downloadFile = async ({key, contentType}) => {
         service.get(contentType.includes('video') ? 'media' : 'documents',key)
@@ -52,6 +54,12 @@ export default function Main({ file, checked, onChange, edit, del, ...rest }) {
         })
         
     }
+
+    const {mutate: removeFromTrash} = useMutation({mutationFn: async () => {
+        return await service.removeFromTrash('all', file);
+    }, onSuccess : async () => {
+        await queryClient.invalidateQueries();
+    }})
 
     return (
         <div {...rest}
@@ -173,6 +181,10 @@ export default function Main({ file, checked, onChange, edit, del, ...rest }) {
                                 <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
                                 Delete
                             </DropdownItem>
+                            {status === 'deleted' ? <DropdownItem onClick={() => removeFromTrash()}>
+                                <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
+                                Remove from trash
+                            </DropdownItem> : null}
                         </DropdownContent>
                     </DropdownMenu>
                 </Dropdown>

@@ -121,6 +121,15 @@ const service = (_token) => ({
 	uploadFileToS3(file, url, contentType) {
 		return uploadToS3({ fileType: contentType, fileContents: file, url });
 	},
+
+	removeFromTrash(resource,file) {
+		return fetch(`${host}/${resource}/remove-from-trash/${file.key}`, {
+			method: 'PUT',
+			headers: new Headers({
+				Authorization: `Bearer ${_token}`,
+			}),
+		}).then((res)=> res.json());
+	}
 });
 
 export const helpers = {
