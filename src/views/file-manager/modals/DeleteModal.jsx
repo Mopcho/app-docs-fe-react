@@ -6,19 +6,23 @@ import useService from "../../../service";
 export default function DeleteModal({ fileToDelete, setFileToDelete, del }) {
   let { service } = useService();
 
+  console.log(fileToDelete);
+
   const queryClient = useQueryClient();
   // delete documents
   const { mutate: _delete, isLoading } = useMutation(
-    async (id) => await service.delete("documents", id),
+    async (id) => await service.delete(fileToDelete.contentType.includes('video') ? 'media' : 'documents' , fileToDelete.key),
     {
       onSuccess: (data) => {
         // toastSuccess("Deleted");
-        queryClient.invalidateQueries(["documents"]);
+        const query = fileToDelete.contentType.includes('video') ? 'media' : 'documents';
+        queryClient.invalidateQueries([query]);
         setFileToDelete(null);
       },
       onError: (err) => {
+        const query = fileToDelete.contentType.includes('video') ? 'media' : 'documents';
         console.log(err);
-        queryClient.invalidateQueries(["documents"]);
+        queryClient.invalidateQueries([query]);
         // toastError("Could not delete");
       },
     }

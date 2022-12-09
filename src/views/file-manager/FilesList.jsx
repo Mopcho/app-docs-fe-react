@@ -16,14 +16,14 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
     // get documents
     let { service } = useService();
     let { isLoading: loadingDocuments, data: documents } = useQuery(
-        [contentType === 'video' ? 'media' : 'documents', {
+        [contentType === 'all' ? 'all' : contentType.includes('video') ? 'media' : 'documents', {
             limit: itemsPerPage,
             offset: currentPage + itemsPerPage,
             contentType,
             status
         }],
-        () =>
-            service.find(contentType === 'video' ? 'media' : 'documents', {
+        () => {
+            return service.find(contentType === 'all' ? 'all' : contentType.includes('video') ? 'media' : 'documents', {
                 pageSize: itemsPerPage,
                 page: currentPage + 1,
                 contentType,
@@ -31,9 +31,8 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
                 ...(search ? { name: search } : {})
 
             })
+        }
     );
-
-    
 
     // helpers
     const items = (documents && documents.data) ? documents.data : [];
@@ -50,7 +49,7 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
                         edit={() => {
                             setFileToEdit(item.key);
                         }}
-                        del={() => { setFileToDelete(item.key) }}
+                        del={() => { setFileToDelete(item) }}
                         key={i}
                     />
                 ))}
