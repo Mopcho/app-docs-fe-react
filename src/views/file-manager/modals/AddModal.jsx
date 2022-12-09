@@ -4,8 +4,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useService from "../../../service";
 import { useDropzone } from 'react-dropzone';
 import { checkMimeType } from "../../../utils/mimeTypes";
+import { Spinner } from "../../../components/spinner/Spinner";
 
-function Basic(props) {
+function Basic({filesChanged}) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({maxFiles : 1});
   const files = acceptedFiles.map(file => (
     <li key={file.path}>
@@ -14,8 +15,8 @@ function Basic(props) {
   ));
 
   useEffect(() => {
-    if (props.filesChanged) {
-      props.filesChanged(acceptedFiles)
+    if (filesChanged) {
+      filesChanged(acceptedFiles)
     }
   }, [acceptedFiles])
 
@@ -43,34 +44,35 @@ export default function show({ show, onClose }) {
   let { service } = useService();
   const [files, setFiles] = useState(null);
 
-  const { mutate: uploadDocument, isLoading: isLoadingUploadDocument } =
-    useMutation(
-      async () => {
-        console.log('Uploading File... ',files[0]);
-        const mimeType = checkMimeType(files[0].path);
-        const endPoint = mimeType.type.split('/')[0] === 'video' ? 'media' : 'documents';
-        let dataResponse = await service.create(endPoint, {
-          "extName": files[0].path.split('.')[1],
-          "fileName": fileName
-        });
+  const uploadFile = async() => {
+    console.log('Uploading File... ',files[0]);
+    const mimeType = checkMimeType(files[0].path);
+    const endPoint = mimeType.type.split('/')[0] === 'video' ? 'media' : 'documents';
+    let dataResponse = await service.create(endPoint, {
+      "extName": files[0].path.split('.')[1],
+      "fileName": fileName
+    })
+    const awsResponse = await service.uploadFileToS3(files[0],dataResponse.preSignedUrl, mimeType.type);
+    return dataResponse;
+  }
 
-        const awsResponse = await service.uploadFileToS3(files[0],dataResponse.preSignedUrl, mimeType.type);
+  const onSuccessFn = async() => {
+    onClose();
+    return await queryClient.invalidateQueries(['documents']);
+  }
 
-        return dataResponse;
-      },
-      {
-        onSuccess: async (data) => {
-          await queryClient.invalidateQueries(['documents']);
-          onClose();
-        },
-        onError: (err) => {
-          console.log("Failed To Upload", err);
-        },
-      }
-    );
+  const onErrorFn = (err) => {
+    console.log("Failed To Upload", err);
+  }
+
+  const { mutate: uploadDocument, isLoading, isIdle, isError, isPaused, isSuccess } =
+    useMutation({mutationFn : uploadFile, onSuccess: onSuccessFn, onError: onErrorFn});
+
+  console.log('isLoading', isLoading);
 
   return (
     <Modal show={show} onHidden={() => onClose()} >
+      {isLoading ? <Spinner></Spinner> : null}
       <div className="p-[20px]">
         <label htmlFor="regular-form-1" className="form-label">
           File name
@@ -86,7 +88,7 @@ export default function show({ show, onClose }) {
       </div>
       <div className="px-[20px]">
         {show && (
-          <Basic filesChanged={(files) =>  setFiles(files) } />
+          <Basic filesChanged={(files) =>  setFiles(files) } isLoading={isLoading}/>
         )}
       </div>
       <div id="custom-previewsContainer" className="dropzone dropzone-previews"></div>
