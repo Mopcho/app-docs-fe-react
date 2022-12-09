@@ -5,6 +5,8 @@ export async function uploadToS3({ fileType, fileContents, url }) {
 
 	const formData = new FormData();
 	formData.append('Content-Type', fileType);
+	formData.append('Content-Disposition', 'attachment');
+
 	// Object.entries(presignedPostUrl.fields).forEach(([k, v]) => {
 	//     formData.append(k, v);
 	// });

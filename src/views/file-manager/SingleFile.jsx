@@ -18,9 +18,8 @@ export default function Main({ file, checked, onChange, edit, del, ...rest }) {
     const downloadFile = async ({key, contentType}) => {
         service.get(contentType.includes('video') ? 'media' : 'documents',key)
         .then((res) => {
-            console.log(res);
             fetch(res.presignedUrl, {
-                method: 'GET',
+                method: 'GET'
             })
             .then((response) => response.blob())
             .then((blob) => {
