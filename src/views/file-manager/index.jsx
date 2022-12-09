@@ -12,6 +12,7 @@ import FileManagerMenu from "./FileManagerMenu"
 import FileManagerFilter from "./FileManagerFilter";
 import FilesList from "./FilesList"
 import { useParams } from "react-router-dom";
+import { PaginationProvider } from "../../contexts/PaginationContext";
 
 
 export default function FileManagerPage() {
@@ -29,7 +30,8 @@ export default function FileManagerPage() {
   const {contentType, status} = useParams();
 
   return (
-    <>
+    <> 
+    <PaginationProvider>
       <div className="grid grid-cols-12 gap-6 mt-8">
 
         {/* Modals */}
@@ -59,6 +61,7 @@ export default function FileManagerPage() {
         </div>
       </div>
       {/* End of main page */}
+      </PaginationProvider>
     </>
   );
 }

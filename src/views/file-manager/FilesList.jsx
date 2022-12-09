@@ -6,12 +6,15 @@ import { useQuery } from '@tanstack/react-query'
 import useService from "../../service";
 import { useState } from "react";
 import { checkExtension } from "../../utils/mimeTypes";
+import usePagination from "../../contexts/PaginationContext";
 
 
 export default function FilesList({ search, setFileToDelete, setFileToEdit , contentType, status }) {
     // pagination
-    let [currentPage, setCurrentPage] = useState(0);
-    let [itemsPerPage, setItemsPerPage] = useState(10);
+    // let [currentPage, setCurrentPage] = useState(0);
+    // let [itemsPerPage, setItemsPerPage] = useState(10);
+
+    const {currentPage, setCurrentPage, itemsPerPage, setItemsPerPage} = usePagination();
 
     // get documents
     let { service } = useService();
