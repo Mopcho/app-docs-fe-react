@@ -25,7 +25,6 @@ export default function Main({ file, checked, onChange, edit, del, status, ...re
             })
             .then((response) => response.blob())
             .then((blob) => {
-                    console.log('asdasd');
                   // Create blob link to download
                   const url = window.URL.createObjectURL(
                     new Blob([blob]),
