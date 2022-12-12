@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
+import {createPortal}  from "react-dom";
 import { Modal } from "../../../base-components/modal";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useService from "../../../service";
 import { useDropzone } from 'react-dropzone';
 import { checkMimeType } from "../../../utils/mimeTypes";
 import { Spinner } from "../../../components/spinner/Spinner";
+import { useNavigate } from "react-router-dom";
 
 function Basic({filesChanged}) {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({maxFiles : 1});
@@ -19,8 +21,6 @@ function Basic({filesChanged}) {
       filesChanged(acceptedFiles)
     }
   }, [acceptedFiles])
-
-  console.log('Attached File : ', acceptedFiles);
 
   return (
     <section className="container">
@@ -38,6 +38,7 @@ function Basic({filesChanged}) {
 
 export default function show({ show, onClose }) {
   const [fileName, setFileName] = useState("");
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -48,32 +49,39 @@ export default function show({ show, onClose }) {
     console.log('Uploading File... ',files[0]);
     const mimeType = checkMimeType(files[0].path);
     const endPoint = mimeType.type.split('/')[0] === 'video' ? 'media' : 'documents';
-    let dataResponse = await service.create(endPoint, {
+    const dataResponse = await service.create(endPoint, {
       "extName": files[0].path.split('.')[1],
       "fileName": fileName
-    })
-    const awsResponse = await service.uploadFileToS3(files[0],dataResponse.preSignedUrl, mimeType.type);
-    return dataResponse;
+    });
+
+    if(dataResponse.status === 403) {
+      navigate('/login');
+    }
+
+    
+    const awsResponse = await service.uploadFileToS3(files[0],dataResponse.data.preSignedUrl, mimeType.type);
+    
+    await queryClient.invalidateQueries();
+
+    return dataResponse.data;
   }
 
   const onSuccessFn = async() => {
     onClose();
-    await queryClient.invalidateQueries(['documents']);
-    await queryClient.invalidateQueries(['media']);
+    await queryClient.invalidateQueries();
   }
 
   const onErrorFn = (err) => {
     console.log("Failed To Upload", err);
   }
 
-  const { mutate: uploadDocument, isLoading, isIdle, isError, isPaused, isSuccess } =
+  const { mutate: uploadDocument, isLoading } =
     useMutation({mutationFn : uploadFile, onSuccess: onSuccessFn, onError: onErrorFn});
 
-  console.log('isLoading', isLoading);
-
+  const root = document.getElementById('root');
   return (
     <Modal show={show} onHidden={() => onClose()} >
-      {isLoading ? <Spinner></Spinner> : null}
+      {isLoading ? createPortal(<Spinner msg={"UPLOADING..."}/>,root) : null}
       <div className="p-[20px]">
         <label htmlFor="regular-form-1" className="form-label">
           File name

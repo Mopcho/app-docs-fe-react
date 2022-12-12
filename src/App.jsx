@@ -10,20 +10,14 @@ import ErrorPage from './views/error-page/Main';
 import { WaitForAuthorizedService } from './service';
 import TopMenu from "./layouts/top-menu/Main";
 import FileManager from "./views/file-manager";
-
+import { Suspense } from "react";
+import { Spinner } from "./components/spinner/Spinner";
 // App
 function App() {
   const queryClient = new QueryClient();
   return (
     <RecoilRoot>
       <BrowserRouter>
-        <Auth0Provider
-          domain={import.meta.env.VITE_AUTH0_DOMAIN}
-          clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
-          audience={import.meta.env.VITE_AUTH0_AUDIENCE}
-          redirectUri={window.location.origin}
-          connection="app-docs"
-        >
           <QueryClientProvider client={queryClient}>
             <ServiceProvider>
               <WaitForAuthorizedService>
@@ -40,7 +34,6 @@ function App() {
               </WaitForAuthorizedService>
             </ServiceProvider>
           </QueryClientProvider>
-        </Auth0Provider>
       </BrowserRouter>
     </RecoilRoot>
   );

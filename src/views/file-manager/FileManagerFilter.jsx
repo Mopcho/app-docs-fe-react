@@ -6,7 +6,6 @@ import {
     DropdownContent,
     DropdownItem,
 } from "@/base-components";
-import { useQuery } from "@tanstack/react-query";
 
 export default function FileManagerFilter({ onSearchChange, search, setAddModal}) {
     return (

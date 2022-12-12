@@ -3,7 +3,6 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { helper as $h } from "@/utils";
 import { topMenu as useTopMenuStore } from "@/stores/top-menu";
 import { faker as $f } from "@/utils";
-import * as $_ from "lodash";
 import { useRecoilValue } from "recoil";
 import { linkTo, nestedMenu } from "@/layouts/side-menu";
 import {
@@ -16,13 +15,11 @@ import {
   DropdownHeader,
   DropdownDivider,
 } from "@/base-components";
-import logoUrl from "@/assets/images/logo.svg";
 import classnames from "classnames";
 import MobileMenu from "@/components/mobile-menu/Main";
 import MainColorSwitcher from "@/components/main-color-switcher/Main";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useService from "../../service";
 
 function Main() {
@@ -32,13 +29,36 @@ function Main() {
   const [formattedMenu, setFormattedMenu] = useState([]);
   const topMenuStore = useRecoilValue(useTopMenuStore);
   const topMenu = () => nestedMenu($h.toRaw(topMenuStore.menu), location);
+
+  const queryClient = useQueryClient();
   // --- //
-  const {logout} = useAuth0();
   let {service} = useService();
 
-  const {status, data, error, isLoading} = useQuery(['user'],() => {
-    return service.find("users/by-token")
+  const {data, isLoading} = useQuery(['user'],async() => {
+    const response = await service.find("auth/me");
+
+    if(response.status === 403) {
+      navigate('/login');
+    }
+
+    return response.data;
   });
+
+  const logout = async () => {
+    await service.delete('auth/logout', null);
+
+    navigate('/login');
+  }
+
+  const {mutate} = useMutation({
+    mutationFn: logout,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries();
+    },
+    onError: async() => {
+      await queryClient.invalidateQueries();
+    }
+  }) 
 
   useEffect(() => {
     dom("body").removeClass("error-page").removeClass("login").addClass("main");
@@ -88,9 +108,9 @@ function Main() {
             <DropdownMenu className="w-56">
               <DropdownContent className="bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
                 <DropdownHeader tag="div" className="!font-normal">
-                  <div className="font-medium">{isLoading ? 'Loading...' : data.username}</div>
+                  <div className="font-medium">{isLoading ? 'Loading...' : data.email}</div>
                   <div className="text-xs text-white/70 mt-0.5 dark:text-slate-500">
-                    {isLoading ? 'Loading...' : data.email}
+                    {isLoading ? 'Loading...' : data.username}
                   </div>
                 </DropdownHeader>
                 <DropdownDivider className="border-white/[0.08]" />
@@ -98,7 +118,7 @@ function Main() {
                   <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
                 </DropdownItem>
                 <DropdownDivider className="border-white/[0.08]" />
-                <DropdownItem className="hover:bg-white/5" onClick={() => logout({returnTo: window.location.origin})}>
+                <DropdownItem className="hover:bg-white/5" onClick={() => mutate()}>
                   <Lucide icon="ToggleRight" className="w-4 h-4 mr-2" /> Logout
                 </DropdownItem>
               </DropdownContent>

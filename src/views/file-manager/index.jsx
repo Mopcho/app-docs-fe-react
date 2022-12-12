@@ -5,7 +5,6 @@ import { useState } from "react";
 import AddModal from "./modals/AddModal";
 import DeleteModal from "./modals/DeleteModal";
 import EditModal from "./modals/EditModal";
-import AddLabelModal from "./modals/AddLabelModal";
 
 // page components
 import FileManagerMenu from "./FileManagerMenu"
@@ -39,7 +38,6 @@ export default function FileManagerPage() {
           show={addModal}
           onClose={() => setAddModal(false)}
         />
-        <AddLabelModal addLabelModal={addLabelModal} onClose={() => setAddLabelModal(null)}></AddLabelModal>
         <EditModal
           file={fileToEdit}
           addModal={false}

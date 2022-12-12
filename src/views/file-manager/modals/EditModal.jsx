@@ -11,7 +11,13 @@ export default function EditModal({ file, onClose , contentType}) {
   const { mutate: updateDocument, isLoading: isLoadingUpdateDocument } =
   useMutation(
       async ([id, data]) => {
-        await service.update('all', id, data);
+        const dataResponse = await service.update('all', id, data);
+
+        if(dataResponse.status === 403) {
+          navigate('/login');
+        }
+
+        return dataResponse.data;
       },
       {
         onSuccess: async (data) => {
@@ -46,7 +52,7 @@ export default function EditModal({ file, onClose , contentType}) {
     </div>
   );
   return (
-    <Modal show={file} onHidden={() => onClose()}>
+    <Modal show={file ? true : false} onHidden={() => onClose()}>
       {input}
       <div id="custom-edit-previewsContainer" className="dropzone dropzone-previews"></div>
       <div className="p-[20px]">

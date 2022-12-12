@@ -2,37 +2,47 @@ import React from "react";
 import { Lucide, Modal, ModalBody } from "../../../base-components";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useService from "../../../service";
+import { createPortal } from "react-dom";
+import { Spinner } from "../../../components/spinner/Spinner";
 
 export default function DeleteModal({ fileToDelete, setFileToDelete, del }) {
   let { service } = useService();
 
-  console.log(fileToDelete);
-
   const queryClient = useQueryClient();
   // delete documents
   const { mutate: _delete, isLoading } = useMutation(
-    async (id) => await service.delete(fileToDelete.contentType.includes('video') ? 'media' : 'documents' , fileToDelete.key),
+    async (id) => {
+      const dataResponse = await service.delete(fileToDelete.contentType.includes('video') ? 'media' : 'documents' , fileToDelete.key);
+      if(dataResponse.status === 403) {
+        navigate('/login');
+      }
+
+      return dataResponse.data;
+    },
     {
-      onSuccess: (data) => {
-        // toastSuccess("Deleted");
-        const query = fileToDelete.contentType.includes('video') ? 'media' : 'documents';
-        queryClient.invalidateQueries([query]);
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          predicate: (query) => {
+            console.log('query',query);
+            return true;
+          }
+        });
         setFileToDelete(null);
       },
-      onError: (err) => {
-        const query = fileToDelete.contentType.includes('video') ? 'media' : 'documents';
+      onError: async (err) => {
         console.log(err);
-        queryClient.invalidateQueries([query]);
-        // toastError("Could not delete");
+        await queryClient.invalidateQueries();
       },
     }
   );
 
+  const root = document.getElementById('root');
   return (
     <Modal
-      show={fileToDelete}
+      show={fileToDelete ? true : false}
       onHidden={() => setFileToDelete(null)}
     >
+      {isLoading ? createPortal(<Spinner msg={"DELETING..."}></Spinner>, root) : null}
       <ModalBody className="p-0">
         <div className="p-5 text-center">
           <Lucide

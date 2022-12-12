@@ -4,17 +4,13 @@ import {
 import SingleFile from "./SingleFile";
 import { useQuery } from '@tanstack/react-query'
 import useService from "../../service";
-import { useState } from "react";
-import { checkExtension } from "../../utils/mimeTypes";
 import usePagination from "../../contexts/PaginationContext";
+import { useNavigate } from "react-router-dom";
 
 
 export default function FilesList({ search, setFileToDelete, setFileToEdit , contentType, status }) {
-    // pagination
-    // let [currentPage, setCurrentPage] = useState(0);
-    // let [itemsPerPage, setItemsPerPage] = useState(10);
-
     const {currentPage, setCurrentPage, itemsPerPage, setItemsPerPage} = usePagination();
+    const navigate = useNavigate();
 
     // get documents
     let { service } = useService();
@@ -26,15 +22,21 @@ export default function FilesList({ search, setFileToDelete, setFileToEdit , con
             status,
             search
         }],
-        () => {
-            return service.find(contentType === 'all' ? 'all' : contentType.includes('video') ? 'media' : 'documents', {
+        async () => {
+            const response = await service.find(contentType === 'all' ? 'all' : contentType.includes('video') ? 'media' : 'documents', {
                 pageSize: itemsPerPage,
                 page: currentPage + 1,
                 contentType,
                 status,
                 ...(search ? { name: search } : {})
+            });
+            console.log('response',response);
+            console.log('response.status',response.status);
+            if(response.status === 403) {
+                navigate('/login');
+            }
 
-            })
+            return response.data;
         }
     );
 

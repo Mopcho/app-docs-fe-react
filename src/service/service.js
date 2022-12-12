@@ -1,23 +1,25 @@
 const host = import.meta.env.VITE_SERVICE_HOST;
-import axios from 'axios';
 import { uploadToS3 } from './s3';
+import axios from 'axios';
 
-const service = (_token) => ({
+
+
+const service = () => ({
 	get(resource, id) {
-		// BRACKETS ERROR
 		const url = `${host}/${resource}/${id}`;
-		return fetch(url, {
-			method: 'GET',
-			headers: new Headers({
+		return axios.get(url, {
+			headers: {
 				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
-			})
+			},
+			withCredentials: true
 		}).then((res) => {
-				if (res.status > 299) {
-					throw new Error(res.status);
-				}
-				return res.json();
-			});
+			if (res.status > 299) {
+				throw new Error(res.status);
+			}
+			return res;
+		}).catch(err => {
+			return err.response;
+		});
 	},
 	find(resource, filters = {}) {
 		let length = Object.keys(filters).length;
@@ -33,34 +35,34 @@ const service = (_token) => ({
 			}
 		});
 		let url = `${host}/${resource}${queryString}`;
-		return fetch(url, {
-			method: 'GET',
-			headers: new Headers({
-				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
-			}),
+
+		console.log(url);
+		return axios.get(url, {
+			withCredentials: true
 		}).then((res) => {
 			if (res.status > 299) {
 				throw new Error(res.status);
 			}
-			return res.json();
+
+			return res;
+		}).catch((err) => {
+			return err.response;
 		});
-		// .catch(console.log)
 	},
 	create(resource, data) {
-		console.log('in service, create');
-		return fetch(`${host}/${resource}`, {
-			method: 'POST',
-			body: JSON.stringify(data),
-			headers: new Headers({
+		const url = `${host}/${resource}`;
+		return axios.post(url, data, {
+			headers: {
 				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
-			}),
-		}).then(async (res) => {
+			},
+			withCredentials: true
+		}).then((res) => {
 			if (res.status > 299) {
 				throw new Error(res.status);
 			}
-			return await res.json();
+			return res;
+		}).catch(err => {
+			return err.response;
 		});
 	},
 	update(resource, id, data) {
@@ -70,52 +72,74 @@ const service = (_token) => ({
 		} else {
 			url = `${host}/${resource}`;
 		}
-		return fetch(url, {
-			method: 'PUT',
-			body: JSON.stringify(data),
-			headers: new Headers({
+		return axios.put(url, data, {
+			headers: {
 				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
-			}),
+			},
+			withCredentials: true
+		}).then((res) => {
+			if (res.status > 299) {
+				throw new Error(res.status);
+			}
+			return 'Success';
 		})
-			.then((res) => {
-				if (res.status > 299) {
-					throw new Error(res.status);
-				}
-				return 'Success';
-			})
-			.catch((err) => console.log(err));
+		.catch((err) => {
+			return err.response;
+		});
 	},
 	delete(resource, id) {
-		console.log('in delete');
-		return fetch(`${host}/${resource}/${id}`, {
-			method: 'DELETE',
-			headers: new Headers({
+		let url = ``;
+		if(!id) {
+			url = `${host}/${resource}`;
+		} else {
+			url = `${host}/${resource}/${id}`;
+		}
+		return axios.delete(url,{
+			headers: {
 				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
-			}),
+			},
+			withCredentials: true
 		})
-			.then((res) => 'Success')
-			.catch(console.log);
+		.then((res) => {
+			if (res.status > 299) {
+				throw new Error(res.status);
+			}
+			return res;
+		}).catch(err => {
+			return err.response;
+		});
 	},
 	run(resource, id, data = {}) {
-		return fetch(`${host}/${resource}/${id}`, {
-			method: 'POST',
-			body: JSON.stringify(data),
+		const url = `${host}/${resource}/${id}`;
+		return axios.post(url,JSON.stringify(data), {
 			headers: new Headers({
 				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
 			}),
-		}).then((res) => res.json());
+			withCredentials: true
+		}).then((res) => {
+			if (res.status > 299) {
+				throw new Error(res.status);
+			}
+			return res;
+		}).catch(err => {
+			return err.response;
+		});
 	},
 	getUserInfo() {
-		return fetch(`${host}/users/me`, {
-			method: 'GET',
+		const url = `${host}/auth/me`;
+		return axios.get(url, {
 			headers: new Headers({
 				'content-type': 'application/json',
-				Authorization: `Bearer ${_token}`,
 			}),
-		}).then((res) => res.json());
+			withCredentials: true
+		}).then((res) => {
+			if (res.status > 299) {
+				throw new Error(res.status);
+			}
+			return res;
+		}).catch(err => {
+			return err.response;
+		});
 	},
 
 	uploadFileToS3(file, url, contentType) {
@@ -123,13 +147,20 @@ const service = (_token) => ({
 	},
 
 	removeFromTrash(resource,file) {
-		return fetch(`${host}/${resource}/remove-from-trash/${file.key}`, {
-			method: 'PUT',
-			headers: new Headers({
-				Authorization: `Bearer ${_token}`,
-			}),
-		}).then((res)=> res.json());
-	}
+		const url = `${host}/${resource}/remove-from-trash/${file.key}`;
+		return axios.put(url,{},{
+			withCredentials: true
+		})
+		.then((res) => {
+			if (res.status > 299) {
+				throw new Error(res.status);
+			}
+			return res;
+		})
+		.catch((err) => {
+			return err.response;
+		});
+	},
 });
 
 export const helpers = {
