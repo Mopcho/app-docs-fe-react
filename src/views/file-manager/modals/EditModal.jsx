@@ -1,5 +1,4 @@
-import React, { useRef, useState } from "react";
-// import Dropzone from "../../base-components/dropzone/Main";
+import React, { useState } from "react";
 import { Modal } from "../../../base-components/modal";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useService from "../../../service";
