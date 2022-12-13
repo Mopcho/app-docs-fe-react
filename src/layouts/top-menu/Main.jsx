@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { helper as $h } from "@/utils";
 import { topMenu as useTopMenuStore } from "@/stores/top-menu";
 import { faker as $f } from "@/utils";
 import { useRecoilValue } from "recoil";
-import { linkTo, nestedMenu } from "@/layouts/side-menu";
 import {
   Lucide,
   Dropdown,
@@ -16,19 +14,16 @@ import {
   DropdownDivider,
 } from "@/base-components";
 import classnames from "classnames";
-import MobileMenu from "@/components/mobile-menu/Main";
 import MainColorSwitcher from "@/components/main-color-switcher/Main";
 import DarkModeSwitcher from "@/components/dark-mode-switcher/Main";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useService from "../../service";
 
 function Main() {
-  const [searchDropdown, setSearchDropdown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const [formattedMenu, setFormattedMenu] = useState([]);
   const topMenuStore = useRecoilValue(useTopMenuStore);
-  const topMenu = () => nestedMenu($h.toRaw(topMenuStore.menu), location);
 
   const queryClient = useQueryClient();
   // --- //
@@ -62,14 +57,12 @@ function Main() {
 
   useEffect(() => {
     dom("body").removeClass("error-page").removeClass("login").addClass("main");
-    setFormattedMenu(topMenu());
   }, [topMenuStore, location.pathname]);
 
   return (
     <div className="py-2">
       <DarkModeSwitcher />
       <MainColorSwitcher />
-      <MobileMenu />
       {/* BEGIN: Top Bar */}
       <div className="border-b border-white/[0.08] mt-[2.2rem] md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-10">
         <div className="top-bar-boxed flex items-center">
