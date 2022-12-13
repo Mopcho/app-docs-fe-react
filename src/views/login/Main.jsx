@@ -44,9 +44,13 @@ function Main() {
 
     const dataResponse = await service.create('auth/login/password', formData);
 
+    console.log('dataResponse', dataResponse);
+
     if(dataResponse.status >= 400) {
-      setGlobalErrors(dataResponse.data.message);
+      return setGlobalErrors('Invalid email or password');
     }
+
+    navigate('/active/image');
 
     return dataResponse;
   }
@@ -60,11 +64,7 @@ function Main() {
       return setGlobalErrors(registerResponse.data.message);
     }
 
-    const loginResponse = await service.create('auth/login/password', formData);
-
-    if(loginResponse.status >= 400) {
-      return setGlobalErrors(loginResponse.data.message);
-    }
+    onLogin(ev);
     
     navigate('/active/image');
   }
@@ -78,9 +78,6 @@ function Main() {
 
   const {mutate: login} = useMutation({
     mutationFn: onLogin,
-    onSuccess: async () => {
-      navigate('/active/image');
-    },
     onError: (err) => {
       console.log(err);
     }
