@@ -3,7 +3,7 @@ import { uploadToS3 } from './s3';
 import axios from 'axios';
 
 
-
+axios.defaults.withCredentials = true;
 const service = () => ({
 	get(resource, id) {
 		const url = `${host}/${resource}/${id}`;
@@ -53,6 +53,7 @@ const service = () => ({
 		const url = `${host}/${resource}`;
 		return axios.post(url, data, {
 			withCredentials: true,
+			credentials: 'include',
 			headers: {
 				'content-type': 'application/json',
 			},
