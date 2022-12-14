@@ -52,10 +52,10 @@ const service = () => ({
 	create(resource, data) {
 		const url = `${host}/${resource}`;
 		return axios.post(url, data, {
+			withCredentials: true,
 			headers: {
 				'content-type': 'application/json',
 			},
-			withCredentials: true
 		}).then((res) => {
 			if (res.status > 299) {
 				throw new Error(res.status);
