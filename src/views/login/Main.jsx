@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ErrorMessage } from "../../components/ErrorMessage/errorMessage";
+import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import { SuccessfulOperation } from "../../components/SuccessfulOperation/SuccessfulOperation";
 import useService from "../../service";
 
