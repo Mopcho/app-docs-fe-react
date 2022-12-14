@@ -11,7 +11,7 @@ const service = () => ({
 			headers: {
 				'content-type': 'application/json',
 			},
-			withCredentials: true
+			withCredentials: true,
 		}).then((res) => {
 			if (res.status > 299) {
 				throw new Error(res.status);
@@ -53,7 +53,6 @@ const service = () => ({
 		const url = `${host}/${resource}`;
 		return axios.post(url, data, {
 			withCredentials: true,
-			credentials: 'include',
 			headers: {
 				'content-type': 'application/json',
 			},
