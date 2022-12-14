@@ -64,9 +64,7 @@ function Main() {
       return setGlobalErrors(registerResponse.data.message);
     }
 
-    onLogin(ev);
-    
-    navigate('/active/image');
+    await onLogin(ev);
   }
 
   const {mutate: register} = useMutation({
