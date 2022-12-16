@@ -9,6 +9,9 @@ import { SuccessfulOperation } from "../../components/SuccessfulOperation/Succes
 import useService from "../../service";
 
 function Main() {
+  // onBlur => Validate field => Show errorMessage if any
+  // When formData passes validation => unblock login and register
+  // 
   useEffect(() => {
     dom("body").removeClass("main").removeClass("error-page").addClass("login");
   }, []);
