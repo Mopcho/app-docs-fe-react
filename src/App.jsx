@@ -9,6 +9,7 @@ import ErrorPage from './views/error-page/Main';
 import { WaitForAuthorizedService } from './service';
 import TopMenu from "./layouts/top-menu/Main";
 import FileManager from "./views/file-manager";
+import { Register } from "./views/register/Register";
 // App
 function App() {
   const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ function App() {
                     <Route path="/:status/:contentType" element={<FileManager />}></Route>
                   </Route>
                   <Route path="/login" element={<Login></Login>}></Route>
+                  <Route path="/register" element={<Register></Register>}></Route>
                   <Route path="/error-page" element={<ErrorPage />}></Route>
                   <Route path="/*" element={<ErrorPage />}></Route>
                 </Routes>
