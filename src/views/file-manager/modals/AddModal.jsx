@@ -63,11 +63,11 @@ export default function show({ show, onClose }) {
       return navigate('/login');
     }
 
-    if(registerResponse.status >= 400) {
+    if(dataResponse.status >= 400) {
       return setGlobalError(registerResponse.data.message);
     }
 
-    const awsResponse = await service.uploadFileToS3(files[0],dataResponse.data.preSignedUrl, mimeType.type);
+    await service.uploadFileToS3(files[0],dataResponse.data.preSignedUrl, mimeType.type);
     
     await queryClient.invalidateQueries();
 
