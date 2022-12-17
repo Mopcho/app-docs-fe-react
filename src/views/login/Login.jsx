@@ -8,9 +8,8 @@ import { ErrorMessage } from "../../components/ErrorMessage/ErrorMessage";
 import { SuccessfulOperation } from "../../components/SuccessfulOperation/SuccessfulOperation";
 import useService from "../../service";
 import { FormInput } from "../../components/FormInput/FormInput";
-import { validationsHashMap } from "../../validations/user.validation";
 
-function Main() {
+export const Login = () => {
   // onBlur => Validate field => Show errorMessage if any
   // When formData passes validation => unblock login and register
   // 
@@ -171,5 +170,3 @@ function Main() {
     </>
   );
 }
-
-export default Main;
