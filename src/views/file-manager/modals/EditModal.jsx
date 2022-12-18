@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "../../../base-components/modal";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useService from "../../../service";
+import {ErrorMessage} from '../../../components/ErrorMessage/ErrorMessage';
 
 export default function EditModal({ file, onClose , contentType}) {
   const [fileName, setFileName] = useState("");
