@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { topMenu as useTopMenuStore } from "@/stores/top-menu";
 import { faker as $f } from "@/utils";
 import { useRecoilValue } from "recoil";
@@ -68,7 +68,7 @@ function Main() {
         <div className="top-bar-boxed flex items-center">
           {/* BEGIN: Logo */}
           <Link
-            to="/top-menu/dashboard-overview-1"
+            to="/active/image"
             className="-intro-x hidden md:flex"
           >
             <span className="text-white text-lg ml-3"> MopDocs </span>
@@ -107,8 +107,8 @@ function Main() {
                   </div>
                 </DropdownHeader>
                 <DropdownDivider className="border-white/[0.08]" />
-                <DropdownItem className="hover:bg-white/5">
-                  <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
+                <DropdownItem className="hover:bg-white/5" onClick={() => navigate('/profile')}>
+                  <Lucide icon="User" className="w-4 h-4 mr-2"/> Profile
                 </DropdownItem>
                 <DropdownDivider className="border-white/[0.08]" />
                 <DropdownItem className="hover:bg-white/5" onClick={() => mutate()}>
