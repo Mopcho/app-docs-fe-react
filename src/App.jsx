@@ -9,6 +9,7 @@ import { WaitForAuthorizedService } from './service';
 import TopMenu from "./layouts/top-menu/Main";
 import FileManager from "./views/file-manager";
 import { Register } from "./views/register/Register";
+import { ProfilePage } from "./views/ProfilePage/Profile";
 
 
 function App() {
@@ -21,8 +22,9 @@ function App() {
               <WaitForAuthorizedService>
                 <Routes>
                   <Route path="/" element={<Navigate to={'/active/image'}></Navigate>}></Route>
-                  <Route path="/:status/:contentType" element={<TopMenu />}>
+                  <Route path="/" element={<TopMenu />}>
                     <Route path="/:status/:contentType" element={<FileManager />}></Route>
+                    <Route path="/profile" element={<ProfilePage />}></Route>
                   </Route>
                   <Route path="/login" element={<Login></Login>}></Route>
                   <Route path="/register" element={<Register></Register>}></Route>
