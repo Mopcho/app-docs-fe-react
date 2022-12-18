@@ -3,39 +3,11 @@ import {createPortal}  from "react-dom";
 import { Modal } from "../../../base-components/modal";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import useService from "../../../service";
-import { useDropzone } from 'react-dropzone';
 import { checkMimeType } from "../../../utils/mimeTypes";
 import { Spinner } from "../../../components/spinner/Spinner";
 import { useNavigate } from "react-router-dom";
 import { ErrorMessage } from "../../../components/ErrorMessage/ErrorMessage";
-
-function Basic({filesChanged}) {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({maxFiles : 1});
-  const files = acceptedFiles.map(file => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ));
-
-  useEffect(() => {
-    if (filesChanged) {
-      filesChanged(acceptedFiles)
-    }
-  }, [acceptedFiles])
-
-  return (
-    <section className="container">
-      <div {...getRootProps({ className: 'dropzone' })}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      </div>
-      <aside>
-        <h4>Files</h4>
-        <ul>{files}</ul>
-      </aside>
-    </section>
-  );
-}
+import { FileDropZone } from "../../../components/FileDropZone/FileDropZone";
 
 export default function show({ show, onClose }) {
   const [fileName, setFileName] = useState("");
@@ -126,7 +98,7 @@ export default function show({ show, onClose }) {
       </div>
       <div className="px-[20px]">
         {show && (
-          <Basic filesChanged={(files) =>  setFiles(files) } isLoading={isLoading}/>
+          <FileDropZone filesChanged={(files) =>  setFiles(files) } isLoading={isLoading}/>
         )}
       </div>
       <div id="custom-previewsContainer" className="dropzone dropzone-previews"></div>

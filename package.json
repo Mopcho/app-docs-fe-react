@@ -25,6 +25,7 @@
     "react-router-dom": "^6.3.0",
     "recoil": "^0.7.0",
     "simplebar": "^5.3.6",
+    "styled-components": "^5.3.6",
     "tabulator-tables": "^4.9.3",
     "tiny-slider": "^2.9.3",
     "tippy.js": "^6.2.7",
