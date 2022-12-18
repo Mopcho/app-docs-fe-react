@@ -78,7 +78,7 @@ export default function EditModal({ file, onClose , contentType}) {
       </div>
       <div id="custom-edit-previewsContainer" className="dropzone dropzone-previews"></div>
       <div className="p-[20px]">
-        <button disabled={!canEdit()} className="btn btn-primary w-24 mr-1 mb-2" onClick={() => updateDocument([file, {fileName : name, extName : '.txt'}])}>Upload</button>
+        <button disabled={!canEdit()} className="btn btn-primary w-24 mr-1 mb-2" onClick={() => updateDocument([file, {fileName: fileName, extName : '.txt'}])}>Upload</button>
       </div>
     </Modal>
   );
