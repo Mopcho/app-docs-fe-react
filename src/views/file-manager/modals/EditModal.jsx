@@ -17,7 +17,7 @@ export default function EditModal({ file, onClose , contentType}) {
         const dataResponse = await service.update('all', id, data);
 
         if(dataResponse.status >= 400) {
-          return setGlobalError(registerResponse.data.message);
+          return setGlobalError(dataResponse.data.message);
         }
 
         if(dataResponse.status === 403) {
